@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "CD3DApp.h"
 
-CD3DApp::CD3DApp(void)
+CD3DApp::CD3DApp()
 {
 }
 
 
-CD3DApp::~CD3DApp(void)
+CD3DApp::~CD3DApp()
 {
 }
 

@@ -1,10 +1,10 @@
 #pragma once
 #include "CD3DApp.h"
+#include <d3dx9math.h>
 #include <D3dx9shape.h>
-#include <conio.h>
-#include <fmod.h>
-#include "Axis.h"
 #include "Ground.h"
+#include "Fmod.h"
+//#include <conio.h>
 
 struct BULLET					//총알 하나하나의 속성
 {
@@ -62,14 +62,14 @@ struct ENEMY_PROPERTY		//적의 개별속성
 	D3DXVECTOR3 vMin, vMax;		//충돌 좌표
 };
 
+enum GAME_STATE { INIT, LOADING, READY, RUN, STOP, SUCCESS, FAILED, END };
+
 class GameCode : public CD3DApp
 {
 	virtual void OnInit();
 	virtual void OnRender();
 	virtual void OnUpdate();
 	virtual void OnRelease();
-
-	static const int m_maxBulletCount = 15;
 
 	D3DXMATRIX m_matView;
 	D3DXMATRIX m_matProj;
@@ -82,9 +82,10 @@ class GameCode : public CD3DApp
 	LPD3DXMESH m_pEnemyBoxMesh;
 	LPD3DXMESH m_pEnemyBulletMesh;
 
+	//플레이어
 	PLAYER m_sPlayer;
 	BULLET_PROPERTY m_sPlayerBulletProperty;
-	BULLET m_sPlayerBullet[m_maxBulletCount];
+	BULLET m_sPlayerBullet[10];
 
 	// 적 캐릭터 
 	ENEMY_PROPERTY m_EnemyProperty;
@@ -93,17 +94,28 @@ class GameCode : public CD3DApp
 	BULLET m_EnemyBullet[100];
 	int m_nEnemyIndex;				//적 캐릭터 구분할 수 있도록 하는 배열의 인덱스 값
 
+	//폰트
+	LPD3DXFONT m_pFont, m_pFont2, m_pFont3;
+
+	//사운드
+	CFmod m_FMODSound;
+
 	DWORD m_dwElapsedTime;
 
 	// 스테이지 정보
 	DWORD m_dwGameStartTime;
 	DWORD m_dwGameElapsedTime;
 
+	int m_nStage;
+	GAME_STATE m_nGameState;
+	int m_nLoadingCount;
+	int m_nGrade;
+	int m_nTotalGrade;
 	int m_nEnemyCount;
 
 	BOOL CheckCubeIntersection(D3DXVECTOR3* vMin1, D3DXVECTOR3* vMax1, D3DXVECTOR3* vMin2, D3DXVECTOR3* vMax2);
 public:
-	GameCode(void);
-	~GameCode(void);
+	GameCode();
+	~GameCode();
 };
 

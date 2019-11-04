@@ -1,6 +1,5 @@
 #pragma once
 #include <d3d9.h>
-#include <d3dx9math.h>
 
 class CD3DApp
 {
@@ -15,11 +14,11 @@ protected:
 	virtual void OnRelease() = 0;
 
 public:
-	CD3DApp(void);
-	~CD3DApp(void);
-
 	HRESULT InitD3D(HWND hWnd);
 	void Render();
 	void Update();
 	void Cleanup();
+
+	CD3DApp();
+	~CD3DApp();
 };
