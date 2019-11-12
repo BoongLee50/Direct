@@ -5,16 +5,15 @@
 #include <string>
 using namespace std;
 
-string g_strBGSound[] = { "init.ogg", "war.mp3", "gameover.mp3" };
-string g_strEffectSound[] = { "story.mp3", "stage.ogg", "play_fire.wav", "enemy_fire.wav", "collision.wav" };
+string g_strBGSound[] = { "Battle in the Stars.ogg", "Alone Against Enemy.ogg", "Victory Tune.ogg" };
+string g_strEffectSound[] = { "story.mp3", "stage.ogg", "play_fire.wav", "enemy_fire.wav", "collision.wav", "Success.mp3" };
 
 extern HWND g_hWnd;
 
 GameCode::GameCode()
 {
-	m_nGameState = INIT;
+	m_nGameState = INIT; 
 }
-
 
 GameCode::~GameCode()
 {
@@ -40,7 +39,7 @@ void GameCode::OnInit()
 
 	switch (m_nGameState)
 	{
-	case INIT :
+	case INIT:
 		GetClientRect(m_hWnd, &rect);
 
 		vp.X = 0;
@@ -51,8 +50,8 @@ void GameCode::OnInit()
 		vp.MaxZ = 1.0f;
 
 		m_Eye.x = 0.0f;
-		m_Eye.y = 90.0f;
-		m_Eye.z = -5.0f;
+		m_Eye.y = 0.0f;
+		m_Eye.z = -12.0f;
 
 		m_At.x = 0.0f;
 		m_At.y = 0.0f;
@@ -95,7 +94,7 @@ void GameCode::OnInit()
 	case LOADING:
 		m_FMODSound.StopSoundBG(0);
 
-		m_FMODSound.CreateEffectSound(5, g_strEffectSound);
+		m_FMODSound.CreateEffectSound(6, g_strEffectSound);
 		//플레이어 충돌 정점 설정 (최대 최소 정점 값 <= 모델 좌표)
 		D3DXVECTOR3* pVertices;
 		m_pTeapotMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)& pVertices);
@@ -123,8 +122,8 @@ void GameCode::OnInit()
 
 		//게임 뷰로 설정
 		m_Eye.x = 0.0f;
-		m_Eye.y = 10.0f;
-		m_Eye.z = -32.0f;
+		m_Eye.y = 50.0f;
+		m_Eye.z = -1.0f;
 
 		m_At.x = 0.0f;
 		m_At.y = 0.0f;
@@ -187,6 +186,8 @@ void GameCode::OnInit()
 
 		m_nGrade = 0; //점수 초기화
 		m_sPlayer.nLife = 3;
+		m_nEnemyCount = 5 * m_nStage;
+
 		break;
 	}
 }
@@ -196,7 +197,8 @@ void GameCode::OnRender()
 	int i;
 	D3DXMATRIX matWorld, matScale, matTrans, matRotation;
 	RECT rt;
-	char string[100];
+	char string1[100];
+	char string2[100];
 
 	switch (m_nGameState)
 	{
@@ -218,31 +220,30 @@ void GameCode::OnRender()
 		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 		m_pPlayerBulletMesh->DrawSubset(0);
 
-		SetRect(&rt, 220, 130, 0, 0);
-		m_pFont->DrawText(NULL, "3D  Sogo   Game", -1, &rt, DT_NOCLIP,
-			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
-		SetRect(&rt, 250, 500, 0, 0);
-		m_pFont2->DrawText(NULL, "Space 키를 눌러 주세요 !!", -1, &rt, DT_NOCLIP,
-			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		SetRect(&rt, 300, 130, 0, 0);
+		m_pFont->DrawText(NULL, "Test   Game", -1, &rt, DT_NOCLIP,
+			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
+		SetRect(&rt, 325, 500, 0, 0);
+		m_pFont2->DrawText(NULL, "Press To Space", -1, &rt, DT_NOCLIP,
+			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		break;
 	case LOADING:
 		SetRect(&rt, 100, 430, 0, 0);
-		m_pFont->DrawText(NULL, "Loading ...", -1, &rt, DT_NOCLIP,
-			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		m_pFont->DrawText(NULL, "Loading", -1, &rt, DT_NOCLIP,
+			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		for (i = 0; i < m_nLoadingCount; i++)
 		{
-			SetRect(&rt, 150 + i * 10, 500, 0, 0);
-			m_pFont2->DrawText(NULL, "■", -1, &rt, DT_NOCLIP,
-				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+			SetRect(&rt, 275 + i * 10, 430, 0, 0);
+			m_pFont->DrawText(NULL, ".", -1, &rt, DT_NOCLIP,
+				D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		}
 		break;
 
 	case READY:
 		SetRect(&rt, 300, 250, 0, 0);
-		sprintf_s(string, "Stage %d", m_nStage);
-		m_pFont->DrawText(NULL, string, -1, &rt, DT_NOCLIP,
-			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
-		m_nEnemyCount = 100;
+		sprintf_s(string1, "Stage %d", m_nStage);
+		m_pFont->DrawText(NULL, string1, -1, &rt, DT_NOCLIP,
+			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		break;
 
 	case RUN:
@@ -290,30 +291,35 @@ void GameCode::OnRender()
 		m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 
 		SetRect(&rt, 10, 20, 0, 0);
-		sprintf_s(string, "Total Score : %d   Score :  %d", m_nTotalGrade, m_nGrade);
-		m_pFont3->DrawText(NULL, string, -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		sprintf_s(string1, "Total Score : %d   Score :  %d", m_nTotalGrade, m_nGrade);
+		m_pFont3->DrawText(NULL, string1, -1, &rt, DT_NOCLIP, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 
 		SetRect(&rt, 680, 20, 0, 0);
-		sprintf_s(string, "%s", "♥");
+		sprintf_s(string1, "%s", "♥");
 		for (i = 0; i < m_sPlayer.nLife; i++)
 		{
 			rt.left = 680 + i * 15;
-			m_pFont2->DrawText(NULL, string, -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+			m_pFont2->DrawText(NULL, string1, -1, &rt, DT_NOCLIP, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		}
+
+		SetRect(&rt, 580, 100, 0, 0);
+		sprintf_s(string2, "TargetCount : %d", m_nEnemyCount);
+		m_pFont2->DrawText(NULL, string2, -1, &rt, DT_NOCLIP, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		break;
 	case SUCCESS:
-		SetRect(&rt, 220, 130, 0, 0);
+		SetRect(&rt, 280, 250, 0, 0);
 		m_pFont->DrawText(NULL, "SUCCESS", -1, &rt, DT_NOCLIP,
-			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		break;
 	case FAILED:
 		SetRect(&rt, 220, 230, 0, 0);
-		m_pFont2->DrawText(NULL, "다시 하시겠습니까? (Yes/No)", -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		m_pFont2->DrawText(NULL, "다시 하시겠습니까? (Y/N)", -1, &rt, DT_NOCLIP, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
 		break;
 	case END:
 		SetRect(&rt, 260, 280, 0, 0);
-		sprintf_s(string, "Total Score : %d", m_nTotalGrade);
-		m_pFont2->DrawText(NULL, string, -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		sprintf_s(string1, "Total Score : %d", m_nTotalGrade);
+		m_pFont2->DrawText(NULL, string1, -1, &rt, DT_NOCLIP, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
+		OnRelease();
 		break;
 	}
 
@@ -348,7 +354,7 @@ void GameCode::OnUpdate()
 	case LOADING:
 		Sleep(100);
 		m_nLoadingCount++;
-		if (m_nLoadingCount == 50)
+		if (m_nLoadingCount == 12)
 		{
 			m_nGameState = READY;
 			m_nStage++;
@@ -388,7 +394,7 @@ void GameCode::OnUpdate()
 				m_sPlayer.vPos.z -= m_dwElapsedTime * m_sPlayer.fVelocity;
 		}
 
-		if (GetAsyncKeyState('S') < 0)  //플레이어 미사일 발사
+		if (GetAsyncKeyState('A') < 0)  //플레이어 미사일 발사
 		{
 			if (dwCurTime - m_sPlayer.dwOldBulletFireTime >= m_sPlayer.dwBulletFireTime)
 			{
@@ -431,11 +437,7 @@ void GameCode::OnUpdate()
 				if (m_Enemy[i].vPos.z <= -20.0f) //경계 영역
 				{
 					m_Enemy[i].nLife = 0;
-					m_nEnemyCount--;    //적 캐릭터의 개수 0 이되면 종료 
-					if (m_nEnemyCount == 0)
-					{
-						m_nGameState = STOP;
-					}
+
 					continue;
 				}
 
@@ -633,6 +635,7 @@ void GameCode::OnUpdate()
 
 		D3DXMatrixTranslation(&m_sPlayer.matTranslation, m_sPlayer.vPos.x, m_sPlayer.vPos.y, m_sPlayer.vPos.z);
 		m_sPlayer.matWorld = m_sPlayer.matScale * m_sPlayer.matRotationY * m_sPlayer.matTranslation;
+
 		break;
 
 	case STOP:
@@ -644,6 +647,7 @@ void GameCode::OnUpdate()
 		}
 		else {
 			m_nGameState = SUCCESS;
+			m_FMODSound.PlaySoundEffect(5);
 		}
 
 		dwReadyTime = 0;
@@ -651,11 +655,17 @@ void GameCode::OnUpdate()
 
 	case SUCCESS:
 		dwReadyTime += m_dwElapsedTime;
-		if (dwReadyTime >= 3000) //3초면 게임으로 진행
+		if (dwReadyTime >= 2000) //3초면 게임으로 진행
 		{
 			m_nGameState = READY;
+			dwReadyTime = 0;
 			m_nStage++;
 			m_nTotalGrade += m_nGrade;
+
+			m_FMODSound.ReleaseSound();
+			m_FMODSound.CreateBGSound(3, g_strBGSound);
+			m_FMODSound.CreateEffectSound(6, g_strEffectSound);
+
 			OnInit();
 		}
 		break;

@@ -22,6 +22,22 @@ struct BULLET_PROPERTY			//醚舅 傈眉加己
 	D3DXVECTOR3 vMin, vMax;		//面倒 谅钎
 };
 
+struct BOMB						//气藕 窍唱窍唱狼 加己
+{
+	int nLife;
+	D3DXVECTOR3 vPos;
+	D3DXMATRIX matTranslation;
+};
+
+struct BOMB_PROPERTY			//气藕 傈眉加己
+{
+	float fBombVelcoty;
+	float fScale;
+	D3DXMATRIX matScale;
+
+	D3DXVECTOR3 vMin, vMax;		//面倒 谅钎
+};
+
 struct PLAYER
 {
 	int nLife;
